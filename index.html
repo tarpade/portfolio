@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Stéphane Tarpade Mianmarde — Ingénieur Cybersécurité & Cloud</title>
+<meta name="description" content="Portfolio cybersécurité de Stéphane Tarpade Mianmarde — Ingénieur Réseaux, Cybersécurité & Cloud. Write-ups, certifications, stack et projets ELK, Active Directory, RADIUS/VoIP." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: { mono: ['"Fira Code"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'] },
+        colors: {
+          base: '#0F172A',
+          surface: '#0b1322',
+          panel: '#111c2e',
+          line: '#1e293b',
+          emerald: { 500: '#10B981', 400: '#34d399', 300: '#6ee7b7' }
+        },
+        boxShadow: {
+          glow: '0 0 20px rgba(16,185,129,0.3)',
+          glowLg: '0 0 40px rgba(16,185,129,0.45)'
+        },
+        keyframes: {
+          slideUp: { '0%': { transform: 'translateY(40px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+          fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+          blink: { '0%,49%': { opacity: '1' }, '50%,100%': { opacity: '0' } },
+          scan: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(100%)' } }
+        },
+        animation: {
+          slideUp: 'slideUp .35s ease-out both',
+          fadeIn: 'fadeIn .25s ease-out both',
+          blink: 'blink 1s steps(1) infinite',
+          scan: 'scan 4s linear infinite'
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html, body { background: #0F172A; color: #d1fae5; font-family: 'Fira Code', monospace; }
+  body { background-image:
+      radial-gradient(1200px 600px at 80% -10%, rgba(16,185,129,0.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 30%, rgba(16,185,129,0.07), transparent 60%),
+      linear-gradient(#0F172A,#0F172A);
+  }
+  .grid-bg::before{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.25;
+    background-image: linear-gradient(rgba(16,185,129,.08) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(16,185,129,.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  }
+  .glass { background: rgba(15,23,42,.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(16,185,129,.15); }
+  .card-glow { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+  .card-glow:hover { transform: translateY(-3px); box-shadow: 0 0 30px rgba(16,185,129,.25); border-color: rgba(16,185,129,.55); }
+  .caret::after { content:"▌"; color:#10B981; margin-left:2px; animation: blink 1s steps(1) infinite; }
+  .scrollbar::-webkit-scrollbar{ width:8px; height:8px; }
+  .scrollbar::-webkit-scrollbar-thumb{ background:#10B981; border-radius:8px; }
+  .scrollbar::-webkit-scrollbar-track{ background:#0b1322; }
+  details > summary { list-style:none; cursor:pointer; }
+  details > summary::-webkit-details-marker{ display:none; }
+  .badge-diff-Low{ background:rgba(16,185,129,.12); color:#34d399; border:1px solid rgba(16,185,129,.4); }
+  .badge-diff-Medium{ background:rgba(234,179,8,.12); color:#fde047; border:1px solid rgba(234,179,8,.4); }
+  .badge-diff-High{ background:rgba(239,68,68,.12); color:#fca5a5; border:1px solid rgba(239,68,68,.4); }
+  .terminal-prompt::before{ content:"┌─[user@stephane]─[~]\A└─$ "; white-space:pre; color:#10B981; }
+  input:focus, textarea:focus { outline:none; }
+
+  /* ===== Timeline (horizontal desktop / vertical mobile) ===== */
+  .htimeline { position: relative; }
+  .htimeline-track {
+    display: flex; gap: 1.25rem; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 2.25rem 0.25rem 1rem; scroll-padding-left: 1rem;
+  }
+  .htimeline-track::before{
+    content:""; position:absolute; left:0; right:0; top:46px; height:2px;
+    background: linear-gradient(90deg, transparent, rgba(16,185,129,.6), rgba(16,185,129,.2), transparent);
+  }
+  .htimeline-item {
+    scroll-snap-align: start;
+    min-width: 260px; max-width: 300px; flex: 0 0 auto;
+    position: relative; padding-top: 36px;
+    opacity: 0; transform: translateY(16px);
+    animation: slideUp .5s ease-out forwards;
+  }
+  .htimeline-item::before{
+    content:""; position:absolute; top:36px; left:24px; width:14px; height:14px;
+    border-radius: 999px; background:#10B981;
+    box-shadow: 0 0 0 4px rgba(16,185,129,.18), 0 0 18px rgba(16,185,129,.55);
+    transform: translateY(-50%);
+    transition: transform .3s ease;
+  }
+  .htimeline-item:hover::before{ transform: translateY(-50%) scale(1.25); }
+  .htimeline-item:nth-child(1){ animation-delay:.05s }
+  .htimeline-item:nth-child(2){ animation-delay:.15s }
+  .htimeline-item:nth-child(3){ animation-delay:.25s }
+  .htimeline-item:nth-child(4){ animation-delay:.35s }
+  .htimeline-item:nth-child(5){ animation-delay:.45s }
+  .htimeline-item:nth-child(6){ animation-delay:.55s }
+  .htimeline-item:nth-child(7){ animation-delay:.65s }
+  .htimeline-card {
+    border:1px solid #1e293b; background: rgba(17,28,46,.7);
+    border-radius:.75rem; padding:1rem; margin-top:1rem;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .htimeline-card:hover { transform: translateY(-4px); border-color: rgba(16,185,129,.55); box-shadow: 0 0 24px rgba(16,185,129,.25); }
+  .htimeline-date { font-size:.7rem; letter-spacing:.1em; color:#34d399; }
+
+  /* ----- Mobile: vertical timeline ----- */
+  @media (max-width: 768px){
+    .htimeline-track {
+      display: block; overflow-x: visible; scroll-snap-type: none;
+      padding: 1rem 0 1rem 1.75rem; position: relative;
+    }
+    .htimeline-track::before{
+      top: 0; bottom: 0; left: 10px; right: auto;
+      width: 2px; height: auto;
+      background: linear-gradient(180deg, transparent, rgba(16,185,129,.6), rgba(16,185,129,.2), transparent);
+    }
+    .htimeline-item {
+      min-width: 0; max-width: 100%; width: 100%;
+      padding-top: 0; padding-left: 1.25rem;
+      margin-bottom: 1.25rem; position: relative;
+    }
+    .htimeline-item::before{
+      top: 18px; left: -22px; width: 14px; height: 14px;
+      transform: none;
+    }
+    .htimeline-item:hover::before{ transform: scale(1.25); }
+    .htimeline-card { margin-top: 0; }
+    .htimeline-date { display: inline-block; margin-bottom: .35rem; }
+  }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ============ NAVBAR ============ -->
+<header class="glass fixed top-0 inset-x-0 z-50">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
+    <a href="#" data-nav="home" class="flex items-center gap-2 group">
+      <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-glow"></span>
+      <span class="text-emerald-400 font-bold tracking-wider">&lt;st.tarpade<span class="text-emerald-300">/&gt;</span></span>
+    </a>
+    <nav class="hidden md:flex items-center gap-1 text-sm">
+      <button data-nav="home"    class="nav-link px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5 transition">~/init</button>
+      <button data-nav="profile" class="nav-link px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5 transition">~/cv</button>
+      <button data-nav="home"    data-scroll="writeups" class="nav-link px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5 transition">~/write-ups</button>
+      <button data-nav="contact" class="nav-link px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400 hover:bg-emerald-500/5 transition">~/contact</button>
+    </nav>
+    <button id="mobileToggle" class="md:hidden text-emerald-400 p-2" aria-label="menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+  <div id="mobileMenu" class="hidden md:hidden border-t border-emerald-500/10">
+    <div class="px-5 py-3 flex flex-col gap-1 text-sm">
+      <button data-nav="home"    class="nav-link text-left px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400">~/init</button>
+      <button data-nav="profile" class="nav-link text-left px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400">~/cv</button>
+      <button data-nav="home"    data-scroll="writeups" class="nav-link text-left px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400">~/write-ups</button>
+      <button data-nav="contact" class="nav-link text-left px-3 py-2 rounded-md text-slate-300 hover:text-emerald-400">~/contact</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HOME ============ -->
+<main id="home-view" class="view pt-24">
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="grid-bg absolute inset-0"></div>
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 py-12 md:py-20 relative">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 tracking-wider">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Disponible immédiatement.
+          </span>
+          <h1 class="mt-6 text-3xl md:text-5xl font-bold text-emerald-50">
+            Stéphane <span class="text-emerald-400">TARPADE MIANMARDE</span>
+          </h1>
+          <p class="mt-3 text-emerald-300/80 text-lg">Ingénieur Réseaux, Cybersécurité &amp; Cloud Computing</p>
+          <p class="mt-4 text-slate-400 max-w-xl">Actuellement en Mastère Cybersécurité & Cloud Computing, mon parcours mêle expertise technique et management d’équipe avec des compétences clés en :
+<br>✓ Audit & Sécurisation d'infrastructures.
+<br>✓ Administration Réseaux & Cloud (IaaS/PaaS/SaaS).
+<br>✓ Gestion de projets & PRA/PCA. <span class="text-emerald-400"><br><br>« Avec une capacité à ne pas lâcher le morceau devant un log d'erreur incompréhensible, je transforme vos défis technologiques en leviers de croissance.  »</span></p>
+          <div class="mt-7 flex flex-wrap gap-3">
+            <button data-nav="home" data-scroll="writeups" class="px-5 py-2.5 rounded-md bg-emerald-500 text-slate-900 font-semibold hover:bg-emerald-400 transition shadow-glow">./run --writeups</button>
+            <button data-nav="contact" class="px-5 py-2.5 rounded-md border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10 transition">./contact --me</button>
+          </div>
+          <div class="mt-8 flex items-center gap-4 text-slate-400 text-sm">
+            <span class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Partout en France et à l'international</span>
+            <span class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>tarpade@hotmail.fr</span>
+          </div>
+        </div>
+
+        <div class="relative flex justify-center lg:justify-end">
+          <div class="relative">
+            <div class="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+              <img src="https://i.ibb.co/VpBXC5qr/IMG-8214.jpg"
+                   alt="IMG 8214" class="w-full h-full object-cover"
+                   onerror="this.outerHTML='<div class=\'w-full h-full flex items-center justify-center bg-slate-900 text-emerald-400 text-6xl font-bold\'>ST</div>'">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WRITE-UPS -->
+  <section id="writeups" class="max-w-7xl mx-auto px-5 sm:px-8 py-16 md:py-20">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <p class="text-emerald-400 text-sm">// ls -la ./projects</p>
+        <h2 class="text-2xl md:text-3xl font-bold text-emerald-50 mt-1">Projets &amp; Write-ups</h2>
+      </div>
+      <span class="hidden sm:block text-xs text-slate-500" id="projCount"></span>
+    </div>
+    <div id="writeupGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+  </section>
+</main>
+
+<!-- ============ PROFILE ============ -->
+<main id="profile-view" class="view hidden pt-24">
+  <section class="max-w-7xl mx-auto px-5 sm:px-8 py-10 md:py-14">
+    <p class="text-emerald-400 text-sm">// cat ./cv.json</p>
+    <h2 class="text-2xl md:text-3xl font-bold text-emerald-50 mt-1">Curriculum Vitae</h2>
+    <p class="text-slate-400 mt-2 max-w-3xl">Ingénieur Réseaux, Cybersécurité &amp; Cloud Computing — 5+ ans d'expérience en administration, conception, sécurisation et exploitation d'infrastructures IT, ainsi qu'en encadrement d'équipes techniques.</p>
+
+    <div class="grid lg:grid-cols-3 gap-6 mt-8">
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- ===== FORMATION ===== -->
+        <div class="rounded-xl border border-line bg-panel/60 p-6">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-emerald-400 font-semibold">// Formation</h3>
+            <span class="text-[10px] text-slate-500 tracking-widest">SCROLL →</span>
+          </div>
+          <div class="htimeline">
+            <ol id="formationTimeline" class="htimeline-track scrollbar"></ol>
+          </div>
+        </div>
+
+        <!-- ===== EXPÉRIENCE PROFESSIONNELLE ===== -->
+        <div class="rounded-xl border border-line bg-panel/60 p-6">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-emerald-400 font-semibold">// Expérience professionnelle</h3>
+            <span class="text-[10px] text-slate-500 tracking-widest">SCROLL →</span>
+          </div>
+          <div class="htimeline">
+            <ol id="experienceTimeline" class="htimeline-track scrollbar"></ol>
+          </div>
+        </div>
+
+        <!-- ===== CERTIFICATIONS ===== -->
+        <div class="rounded-xl border border-line bg-panel/60 p-6">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-emerald-400 font-semibold">// Certifications</h3>
+            <span class="text-[10px] text-slate-500 tracking-widest">SCROLL →</span>
+          </div>
+          <div class="htimeline">
+            <ol id="certificationsTimeline" class="htimeline-track scrollbar"></ol>
+          </div>
+        </div>
+
+        <!-- ===== COMPÉTENCES ===== -->
+        <div class="rounded-xl border border-line bg-panel/60 p-6">
+          <h3 class="text-emerald-400 font-semibold mb-5">// Compétences</h3>
+          <div id="skillsGrid" class="grid sm:grid-cols-2 gap-5"></div>
+        </div>
+
+        <!-- ===== STACK ===== -->
+        <div class="rounded-xl border border-line bg-panel/60 p-6">
+          <h3 class="text-emerald-400 font-semibold mb-5">// Stack &amp; Outils</h3>
+          <div id="stackGrid" class="grid sm:grid-cols-2 gap-5"></div>
+        </div>
+      </div>
+
+      <!-- Direct access -->
+      <aside class="rounded-xl border border-emerald-500/40 bg-panel/60 p-6 h-fit shadow-glow">
+        <h3 class="text-emerald-400 font-semibold mb-4">// Accès direct</h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Nom</div><div class="text-emerald-100">Stéphane Tarpade Mianmarde</div></div></li>
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Rôle</div><div class="text-emerald-100">Ingénieur Réseaux, Cybersécurité &amp; Cloud</div></div></li>
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Téléphone</div><div class="text-emerald-100">07 44 97 77 10</div></div></li>
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Email</div><a href="mailto:tarpade@hotmail.fr" class="text-emerald-300 hover:text-emerald-200 break-all">tarpade@hotmail.fr</a></div></li>
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Localisation</div><div class="text-emerald-100">Bordeaux, FR — international</div></div></li>
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Disponibilité</div><div class="text-emerald-100">Contrat de professionnalisation / stage</div></div></li>
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Langues</div><div class="text-emerald-100">Français C2 · Anglais A1</div></div></li>
+          <li class="flex items-start gap-3"><span class="text-emerald-400 mt-1">▸</span><div><div class="text-slate-400 text-xs">Soft skills</div><div class="text-emerald-100">Polyvalent · Curieux · Adaptable · Esprit d'analyse · Sens des responsabilités</div></div></li>
+        </ul>
+        <div class="mt-5 pt-5 border-t border-line flex gap-3" id="profileSocials"></div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<!-- ============ CONTACT ============ -->
+<main id="contact-view" class="view hidden pt-24">
+  <section class="max-w-3xl mx-auto px-5 sm:px-8 py-12 md:py-16">
+    <p class="text-emerald-400 text-sm">// ./contact --interactive</p>
+    <h2 class="text-2xl md:text-3xl font-bold text-emerald-50 mt-1">Établir une connexion sécurisée</h2>
+    <p class="text-slate-400 mt-2">Pour collaboration, mission, ou échange technique. La transmission est chiffrée côté client.</p>
+
+    <form id="contactForm" class="mt-8 rounded-xl border border-line bg-panel/70 p-6 md:p-8 space-y-5">
+      <div class="text-emerald-400 text-xs">┌─[user@stephane]─[~/contact]<br>└─$ ./send_message</div>
+
+      <label class="block">
+        <span class="text-emerald-300 text-xs">User_Name:</span>
+        <div class="mt-1 flex items-center gap-2 border border-line rounded-md bg-base px-3 py-2 focus-within:border-emerald-500 focus-within:shadow-glow transition">
+          <span class="text-emerald-500">$</span>
+          <input required name="name" type="text" placeholder="Jane Doe" class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm">
+        </div>
+      </label>
+
+      <label class="block">
+        <span class="text-emerald-300 text-xs">User_Email:</span>
+        <div class="mt-1 flex items-center gap-2 border border-line rounded-md bg-base px-3 py-2 focus-within:border-emerald-500 focus-within:shadow-glow transition">
+          <span class="text-emerald-500">$</span>
+          <input required name="email" type="email" placeholder="jane@corp.io" class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm">
+        </div>
+      </label>
+
+      <label class="block">
+        <span class="text-emerald-300 text-xs">Command_Message:</span>
+        <div class="mt-1 flex gap-2 border border-line rounded-md bg-base px-3 py-2 focus-within:border-emerald-500 focus-within:shadow-glow transition">
+          <span class="text-emerald-500 mt-0.5">&gt;</span>
+          <textarea required name="message" rows="6" placeholder="Décris ta demande, ton contexte, ton scope..." class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm resize-y"></textarea>
+        </div>
+      </label>
+
+      <div class="flex flex-wrap items-center gap-3 pt-2">
+        <button type="submit" class="px-5 py-2.5 rounded-md bg-emerald-500 text-slate-900 font-semibold hover:bg-emerald-400 transition shadow-glow">[ EXEC ] — Envoyer</button>
+        <a href="mailto:s.tarpade@protonmail.com" class="text-emerald-300 hover:text-emerald-200 text-sm">…ou via mailto://</a>
+        <span id="formStatus" class="text-emerald-400 text-xs ml-auto"></span>
+      </div>
+    </form>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t border-emerald-500/15 mt-12">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p class="text-xs text-slate-500">© <span id="year"></span> Stéphane Tarpade Mianmarde — Built with <span class="text-emerald-400">&lt;sec/&gt;</span> &amp; coffee.</p>
+    <div id="footerSocials" class="flex items-center gap-3"></div>
+  </div>
+</footer>
+
+<!-- ============ MODAL ============ -->
+<div id="modal" class="hidden fixed inset-0 z-[100] bg-base/95 backdrop-blur-sm overflow-y-auto scrollbar">
+  <div class="min-h-full animate-slideUp">
+    <div class="sticky top-0 z-10 glass">
+      <div class="max-w-6xl mx-auto px-5 sm:px-8 h-14 flex items-center justify-between">
+        <button id="modalBack" class="text-emerald-400 hover:text-emerald-300 text-sm flex items-center gap-2">
+          ← RETOUR_PROCESS
+        </button>
+        <span id="modalCrumb" class="text-xs text-slate-500"></span>
+        <button id="modalClose" class="text-slate-400 hover:text-emerald-400" aria-label="close">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="modalBody" class="max-w-6xl mx-auto px-5 sm:px-8 py-8"></div>
+  </div>
+</div>
+
+<script>
+/* ===================== DATA ===================== */
+const cyberData = {
+  identity: {
+    name: "Stéphane Tarpade Mianmarde",
+    alias: "st.tarpade",
+    role: "Ingénieur Réseaux, Cybersécurité & Cloud Computing",
+    location: "Bordeaux, FR",
+    email: "s.tarpade@protonmail.com",
+    bio: "Ingénieur en infrastructures IT avec 5+ années d'expérience opérationnelle. Spécialiste sécurité offensive/défensive, architectures réseau et cloud hybride. Vision : intégrer la sécurité dès la conception."
+  },
+  links: {
+    tryhackme: "https://tryhackme.com/p/s.tarpade",
+    linkedin:  "https://www.linkedin.com/in/st%C3%A9phane-tarpade-mianmarde-05025550/"
+  },
+  skills: {
+    "Cybersécurité": [
+      "Sécurisation des réseaux et des systèmes",
+      "Gestion des accès et des identités",
+      "Sauvegarde, PRA/PCA, continuité de service",
+      "Sensibilisation et formation des utilisateurs"
+    ],
+    "Réseaux & Systèmes": [
+      "Conception et administration d'infrastructures réseau",
+      "LAN / WAN / VPN / Wi-Fi",
+      "Supervision, maintenance et support niveau 1 à 3",
+      "NAS (Synology), serveurs, virtualisation"
+    ],
+    "Cloud Computing": [
+      "Fondamentaux Cloud (IaaS, PaaS, SaaS)",
+      "Administration et sécurisation d'environnements Cloud",
+      "Hybridation Cloud / On-Premise"
+    ],
+    "Gestion & Support IT": [
+      "Gestion de projets techniques",
+      "Encadrement et formation d'équipes IT",
+      "Support utilisateurs et assistance technique"
+    ]
+  },
+  stack: {
+    "Recon":        ["Nmap","Masscan","Shodan","Amass","theHarvester","Nikto"],
+    "Exploitation": ["Metasploit","BloodHound","Mimikatz","Impacket","Hydra","Hashcat"],
+    "Defense / SIEM":["ELK Stack","Wazuh","Splunk","Suricata","Purple Knight","PingCastle"],
+    "Cloud & Infra":["AWS","Azure","Hyper-V","VMware","Docker","Kubernetes"],
+    "Scripting":    ["Python","Bash","PowerShell","YAML","Terraform"],
+    "Web":          ["Burp Suite","OWASP ZAP","sqlmap","ffuf","gobuster"]
+  },
+  formations: [
+    {
+      date: "2025",
+      titre: "Mastère Cybersécurité & Cloud Computing",
+      etablissement: "IPSSI",
+      lieu: "France",
+      detail: "Formation en cours — sécurité offensive/défensive, architectures cloud hybrides, audit & conformité."
+    },
+    {
+      date: "2015",
+      titre: "Master Ingénierie Réseaux, Sécurité & Télécoms",
+      etablissement: "Sup'Management",
+      lieu: "",
+      detail: "Conception, administration et sécurisation d'infrastructures réseaux et télécoms."
+    },
+    {
+      date: "2012",
+      titre: "Licence Professionnelle Réseaux & Télécommunications",
+      etablissement: "Université du Littoral Côte d'Opale",
+      lieu: "Calais, France",
+      detail: "Spécialisation réseaux, téléphonie sur IP et infrastructures de communication."
+    }
+  ],
+  experiences: [
+    {
+      date: "2023 – 2025",
+      poste: "Consultant Indépendant IT — Cybersécurité & Réseaux",
+      entreprise: "Indépendant",
+      contrat: "Indépendant",
+      lieu: "International",
+      missions: [
+        "Conseil, accompagnement et formation de plus de 20 utilisateurs à l'utilisation sécurisée des SI.",
+        "Mise en place et administration d'un NAS Synology pour une institution culturelle (disponibilité +99 %).",
+        "Sécurisation et optimisation d'infrastructures IT clients — incidents de sécurité réduits de 30 %.",
+        "Support réseaux & systèmes pour les clients internationaux de TECH DOMAIN Australie."
+      ]
+    },
+    {
+      date: "2020 – 2023",
+      poste: "Responsable Informatique",
+      entreprise: "ALAE GROUP",
+      contrat: "CDD",
+      lieu: "International",
+      missions: [
+        "Management et formation d'une équipe de plus de 25 techniciens IT.",
+        "Planification et supervision des opérations IT multi-sites.",
+        "Mise en conformité des SI et renforcement de la sécurité globale — incidents critiques -40 %.",
+        "Tests applicatifs et déploiement technique en environnement utilisateur et client."
+      ]
+    },
+    {
+      date: "2019",
+      poste: "Technicien Réseaux & Télécommunications",
+      entreprise: "NS2I Groupe / T-Rex Net",
+      contrat: "CDD",
+      lieu: "Afrique",
+      missions: [
+        "Installation et configuration d'équipements réseau pour des clients FAI.",
+        "Support client et maintenance préventive.",
+        "Résolution d'incidents critiques, notamment sur des liaisons satellites."
+      ]
+    },
+    {
+      date: "2015",
+      poste: "Informaticien",
+      entreprise: "Groupe Abassi (CIC)",
+      contrat: "CDD",
+      lieu: "Afrique",
+      missions: [
+        "Installation et maintenance des équipements IT et réseaux.",
+        "Formation des utilisateurs et support systèmes.",
+        "Optimisation de la connexion Internet — stabilité du débit réel +70 %."
+      ]
+    },
+    {
+      date: "2015",
+      poste: "IT Support Supervisor",
+      entreprise: "Afrijeux",
+      contrat: "CDI",
+      lieu: "Afrique",
+      missions: [
+        "Supervision d'un parc informatique et réseau de plus de 50 postes.",
+        "Gestion administrative et technique de l'agence."
+      ]
+    },
+    {
+      date: "2014 – 2016",
+      poste: "Consultant IT & Assistant Formateur",
+      entreprise: "Maison de la Culture Baba Moustapha",
+      contrat: "Mission",
+      lieu: "Afrique",
+      missions: [
+        "Installation et maintenance des équipements IT.",
+        "Formation de plus de 30 utilisateurs aux outils bureautiques et réseaux.",
+        "Relance et structuration d'une salle de formation informatique."
+      ]
+    }
+  ],
+  certifications: [
+    { id:"c1", nom:"Mastère Cybersécurité & Cloud Computing", organisme:"IPSSI Bordeaux", date:"2025 — en cours", identifiant_badge:"#" },
+    { id:"c2", nom:"Intro to Pentesting", organisme:"TryHackMe", date:"2024", identifiant_badge:"https://tryhackme.com/s.tarpade/badges/intro-to-pentesting" },
+    { id:"c3", nom:"Introduction to Cybersecurity", organisme:"Cisco", date:"2024", identifiant_badge:"https://www.credly.com/badges/2b945220-735e-4eb5-a47a-d11d89be093f/linked_in_profile" }
+  ],
+  writeups: [
+    {
+      id:"p1",
+      title:"Architecture ELK — Centralisation & analyse de logs IIS",
+      plateforme:"IPSSI / Lab",
+      date:"Mars 2026",
+      duration:"6 semaines",
+      role:"Ingénieur Systèmes & Sécurité",
+      stack:["Elasticsearch 8.19","Logstash","Kibana","Filebeat","Ubuntu 22.04","Windows Server","Hyper-V","Grok","TLS"],
+      target:"Serveur IIS — domaine pédagogique",
+      cve:"N/A",
+      difficulty:"Medium",
+      image:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=900&q=70",
+      gallery:[
+        "https://i.ibb.co/PsWQJB7r/image.png",
+        "https://i.ibb.co/VP4HdPC/image-1.png"
+      ],
+      contexte:"Déploiement d'une stack ELK multi-OS sur Hyper-V pour centraliser les logs IIS au format W3C. Stack ELK 8.x sur Ubuntu 22.04 (8 Go RAM), source Windows Server (4 Go). Objectif : visibilité temps réel et détection d'incidents.",
+      vulnerabilite:"Avant centralisation : logs IIS dispersés, pas de corrélation, pas de détection d'anomalies (codes 4xx/5xx massifs, scans, pics de trafic). Aucune supervision des accès web.",
+      exploitation:"Pipeline ETL Logstash (iis-pipeline.conf) avec filtres Grok pour parser les champs W3C. Filebeat installé en service Windows pousse les logs sur le port 5044 (TLS). Elasticsearch indexe (port 9200/HTTPS), Kibana visualise (port 5601). Sécurité native 8.x activée : SSL/TLS, certificats auto-signés, jetons d'inscription (Enrollment Tokens) pour lier Kibana ↔ Elasticsearch.",
+      mitigation:"Tableaux de bord Kibana : répartition codes 200/404/500 (camembert), volume horaire, top URL, IP suspectes. Tuning JVM Elasticsearch (-Xms / -Xmx) pour stabilité sur lab 12 Go. Politique ILM pour rotation des indices.",
+      github_link:"https://github.com/"
+    },
+    {
+      id:"p2",
+      title:"Audit Active Directory — Red Team / Blue Team (ipssi.local)",
+      plateforme:"Lab interne IPSSI",
+      date:"Mars 2026",
+      duration:"4 semaines",
+      role:"Ingénieur Cybersécurité (Red & Blue)",
+      stack:["BloodHound","Purple Knight","PingCastle","Impacket","Mimikatz","Rubeus","ADSI Edit","PowerShell"],
+      target:"Domaine Active Directory ipssi.local",
+      cve:"Multiples (Kerberoasting, AS-REP, DCSync)",
+      difficulty:"High",
+      image:"https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=900&q=70",
+      gallery:[
+        "https://i.ibb.co/fY3PFYd4/image-2.png",
+        "https://i.ibb.co/nsHYgSN5/image-3.png"
+      ],
+      contexte:"Audit offensif et défensif d'un domaine AD pédagogique pour évaluer la résilience de l'annuaire et produire un plan de remédiation. Cartographie complète des chemins d'attaque vers Domain Admins.",
+      vulnerabilite:"Surface d'attaque critique : SPN exposés (Kerberoasting), comptes sans pré-auth Kerberos (AS-REP Roasting), droits de réplication abusables (DCSync sur KRBTGT), persistance via AdminSDHolder, droits GenericAll sur OU offrant un chemin direct user→Domain Admins.",
+      exploitation:"Kerberoasting via setspn + Rubeus, extraction tickets TGS, cassage hashcat. AS-REP Roasting sur comptes sans pré-auth. DCSync via Impacket secretsdump pour exfiltrer le hash KRBTGT (Golden Ticket possible). Modification AdminSDHolder pour persistance cyclique. Cartographie BloodHound : chemin ROUGE 10/10 entre tarpade et Domain Admins.",
+      mitigation:"Restauration ACL d'origine sur AdminSDHolder via ADSI Edit. Suppression des droits de réplication sur comptes non-admin. Ajout des admins au groupe Protected Users (anti pass-the-hash, anti cache credentials). Rotation KRBTGT (×2). Scores après remédiation : Purple Knight 69% (D+) → cible >85%, PingCastle comptes privilégiés 50/100 → cible <30/100.",
+      github_link:"https://github.com/"
+    },
+    {
+      id:"p3",
+      title:"Intégration RADIUS dans un réseau VoIP Asterisk",
+      plateforme:"COMTEL Technologies",
+      date:"2012",
+      duration:"6 mois (stage de fin d'études)",
+      role:"Ingénieur Réseau Junior",
+      stack:["Asterisk","FreeRADIUS","Ubuntu 10.11","VMware","SIP","IAX2","RTP","PortaOne RADIUS client"],
+      target:"IPBX Asterisk + serveur AAA",
+      cve:"N/A — durcissement architecture",
+      difficulty:"Medium",
+      image:"https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=900&q=70",
+      gallery:[
+        "https://i.ibb.co/MF8Kc03/image-4.png",
+        "https://i.ibb.co/wrMK2cDF/image-1.jpg"
+      ],
+      contexte:"Mémoire de fin d'études visant à sécuriser les communications vocales d'entreprise via une authentification forte. La VoIP est exposée à fraude téléphonique, usurpation d'identité et accès non autorisés.",
+      vulnerabilite:"Authentification SIP native faible, comptes partagés, pas de traçabilité des appels (accounting), risques de DoS sur le service de téléphonie, non-répudiation impossible.",
+      exploitation:"Mise en œuvre du modèle AAA (Authentication, Authorization, Accounting). FreeRADIUS sur Ubuntu 10.11 (VMware). Intégration via le module externe PortaOne RADIUS client pour Asterisk (préféré aux modules natifs jugés obsolètes). Authentification login/password retenue (X.509 trop lourd, MAC trop vulnérable en Wi-Fi).",
+      mitigation:"Élimination des risques de non-répudiation, protection contre DoS sur la téléphonie, mise en place d'un Accounting permettant traçabilité et facturation précise des ressources réseau. Architecture éprouvée et documentée pour reproduction client.",
+      github_link:"https://github.com/"
+    }
+  ]
+};
+
+/* ===================== SOCIAL ICONS (SVG) ===================== */
+const ICONS = {
+  github:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.34-1.28-1.7-1.28-1.7-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.04 1.78 2.72 1.27 3.39.97.1-.75.4-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.69 5.4-5.25 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.21.67.8.55 4.56-1.52 7.85-5.83 7.85-10.91C23.5 5.65 18.35.5 12 .5z"/></svg>`,
+  linkedin:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05c.48-.91 1.65-1.86 3.4-1.86 3.64 0 4.31 2.4 4.31 5.52v6.23zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>`,
+  tryhackme:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3 7v6c0 5 3.8 9.4 9 10 5.2-.6 9-5 9-10V7l-9-5zm-1 14-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6z"/></svg>`,
+  rootme:`<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v2H6v5H4V4zm9 0h7v7h-2V6h-5V4zM4 13h2v5h5v2H4v-7zm14 0h2v7h-7v-2h5v-5z"/></svg>`,
+  mail:`<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>`
+};
+function socialHTML(opts){
+  const L = cyberData.links;
+  const includeAll = !opts || opts.full !== false;
+  const item = (href, icon, label) => `<a href="${href}" target="_blank" rel="noopener" aria-label="${label}" class="text-slate-400 hover:text-emerald-400 transition">${icon}</a>`;
+  const list = [
+    item(L.linkedin, ICONS.linkedin, "LinkedIn"),
+    item("mailto:"+cyberData.identity.email, ICONS.mail, "Email")
+  ];
+  if (includeAll && L.tryhackme) list.splice(1, 0, item(L.tryhackme, ICONS.tryhackme, "TryHackMe"));
+  return list.join("");
+}
+
+/* ===================== ROUTING ===================== */
+const views = ["home","profile","contact"];
+function showView(name, scrollTarget){
+  views.forEach(v => {
+    const el = document.getElementById(v+"-view");
+    if(!el) return;
+    if(v===name){ el.classList.remove("hidden"); el.classList.add("animate-fadeIn"); }
+    else { el.classList.add("hidden"); el.classList.remove("animate-fadeIn"); }
+  });
+  document.querySelectorAll(".nav-link").forEach(b=>{
+    b.classList.toggle("text-emerald-400", b.dataset.nav===name && !b.dataset.scroll);
+  });
+  window.scrollTo({top:0, behavior:"instant"});
+  if(scrollTarget){
+    setTimeout(()=>{ document.getElementById(scrollTarget)?.scrollIntoView({behavior:"smooth", block:"start"}); }, 80);
+  }
+  document.getElementById("mobileMenu")?.classList.add("hidden");
+}
+document.querySelectorAll("[data-nav]").forEach(b=>{
+  b.addEventListener("click", ()=> showView(b.dataset.nav, b.dataset.scroll));
+});
+document.getElementById("mobileToggle").addEventListener("click", ()=>{
+  document.getElementById("mobileMenu").classList.toggle("hidden");
+});
+
+
+
+/* ===================== RENDER WRITEUPS ===================== */
+function renderWriteups(){
+  const grid = document.getElementById("writeupGrid");
+  document.getElementById("projCount").textContent = `${cyberData.writeups.length} entrées indexées`;
+  grid.innerHTML = cyberData.writeups.map((w,i)=>`
+    <button data-open="${w.id}" class="card-glow text-left rounded-xl border border-line bg-panel/60 overflow-hidden group">
+      <div class="relative aspect-[16/10] overflow-hidden">
+        <img src="${w.image}" alt="${w.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+        <span class="absolute top-3 left-3 text-[10px] tracking-widest px-2 py-1 rounded bg-base/80 border border-emerald-500/30 text-emerald-300">#${String(i+1).padStart(2,"0")}</span>
+        <span class="absolute top-3 right-3 text-[10px] tracking-widest px-2 py-1 rounded badge-diff-${w.difficulty}">${w.difficulty.toUpperCase()}</span>
+      </div>
+      <div class="p-5">
+        <div class="flex items-center gap-2 text-xs text-emerald-400/80">
+          <span>${w.plateforme}</span><span class="text-slate-600">·</span><span>${w.date}</span>
+        </div>
+        <h3 class="mt-2 text-emerald-50 font-semibold leading-snug group-hover:text-emerald-300 transition">${w.title}</h3>
+        <div class="mt-3 flex flex-wrap gap-1.5">
+          ${w.stack.slice(0,4).map(s=>`<span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">${s}</span>`).join("")}
+          ${w.stack.length>4?`<span class="text-[10px] px-2 py-0.5 rounded text-slate-500">+${w.stack.length-4}</span>`:""}
+        </div>
+      </div>
+    </button>
+  `).join("");
+  grid.querySelectorAll("[data-open]").forEach(b=>{
+    b.addEventListener("click", ()=> openModal(b.dataset.open));
+  });
+}
+
+/* ===================== RENDER PROFILE ===================== */
+function renderProfile(){
+  // ===== Formations =====
+  document.getElementById("formationTimeline").innerHTML = cyberData.formations.map(f=>`
+    <li class="htimeline-item">
+      <div class="htimeline-date">${f.date}</div>
+      <div class="htimeline-card">
+        <div class="text-emerald-100 font-semibold leading-snug">${f.titre}</div>
+        <div class="text-sm text-emerald-300/90 mt-1">${f.etablissement}${f.lieu?` — <span class="text-slate-400">${f.lieu}</span>`:""}</div>
+        <p class="text-xs text-slate-400 mt-2 leading-relaxed">${f.detail}</p>
+      </div>
+    </li>
+  `).join("");
+
+  // ===== Expériences =====
+  document.getElementById("experienceTimeline").innerHTML = cyberData.experiences.map(x=>`
+    <li class="htimeline-item">
+      <div class="htimeline-date">${x.date}</div>
+      <div class="htimeline-card">
+        <div class="text-emerald-100 font-semibold leading-snug">${x.poste}</div>
+        <div class="text-sm text-emerald-300/90 mt-1">${x.entreprise}</div>
+        <div class="flex flex-wrap gap-1.5 mt-2">
+          <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">${x.contrat}</span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-base/60 text-slate-400 border border-line">${x.lieu}</span>
+        </div>
+        <ul class="mt-3 space-y-1">
+          ${x.missions.map(m=>`<li class="text-xs text-slate-400 leading-relaxed flex gap-2"><span class="text-emerald-400 mt-0.5">▸</span><span>${m}</span></li>`).join("")}
+        </ul>
+      </div>
+    </li>
+  `).join("");
+
+  // ===== Certifications =====
+  document.getElementById("certificationsTimeline").innerHTML = cyberData.certifications.map(c=>`
+    <li class="htimeline-item">
+      <div class="htimeline-date">${c.date}</div>
+      <div class="htimeline-card">
+        <div class="text-emerald-100 font-semibold leading-snug">${c.nom}</div>
+        <div class="text-sm text-emerald-300/90 mt-1">${c.organisme}</div>
+        ${c.identifiant_badge && c.identifiant_badge!=="#"
+          ? `<a href="${c.identifiant_badge}" target="_blank" rel="noopener" class="text-xs text-emerald-300 hover:text-emerald-200 inline-flex items-center gap-1 mt-3">→ Vérifier le badge</a>`
+          : `<div class="text-[10px] text-slate-500 mt-3 tracking-widest">EN COURS</div>`}
+      </div>
+    </li>
+  `).join("");
+
+  // ===== Compétences =====
+  document.getElementById("skillsGrid").innerHTML = Object.entries(cyberData.skills).map(([cat, items])=>`
+    <div class="rounded-lg border border-line bg-base/60 p-4">
+      <div class="text-emerald-400 text-xs mb-2">// ${cat}</div>
+      <ul class="space-y-1">
+        ${items.map(i=>`<li class="text-xs text-slate-300 flex gap-2"><span class="text-emerald-400 mt-0.5">▸</span><span>${i}</span></li>`).join("")}
+      </ul>
+    </div>
+  `).join("");
+
+  // ===== Stack =====
+  document.getElementById("stackGrid").innerHTML = Object.entries(cyberData.stack).map(([cat,tools])=>`
+    <div class="rounded-lg border border-line bg-base/60 p-4">
+      <div class="text-emerald-400 text-xs mb-2">// ${cat}</div>
+      <div class="flex flex-wrap gap-1.5">
+        ${tools.map(t=>`<span class="text-xs px-2 py-1 rounded bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">${t}</span>`).join("")}
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("profileSocials").innerHTML = socialHTML();
+}
+
+/* ===================== MODAL ===================== */
+let currentIdx = 0;
+function openModal(id){
+  currentIdx = cyberData.writeups.findIndex(w=>w.id===id);
+  if(currentIdx<0) currentIdx = 0;
+  renderModal();
+  document.getElementById("modal").classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+}
+function closeModal(){
+  document.getElementById("modal").classList.add("hidden");
+  document.body.style.overflow = "";
+}
+function renderModal(){
+  const w = cyberData.writeups[currentIdx];
+  const total = cyberData.writeups.length;
+  const prev = cyberData.writeups[(currentIdx - 1 + total) % total];
+  const next = cyberData.writeups[(currentIdx + 1) % total];
+  document.getElementById("modalCrumb").textContent = `incident ${currentIdx+1}/${total}`;
+  document.getElementById("modalBody").innerHTML = `
+    <div class="rounded-xl overflow-hidden border border-emerald-500/30 mb-8 bg-panel">
+      <img src="${w.image}" alt="${w.title}" class="w-full max-h-[500px] object-cover">
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 space-y-8">
+        <div>
+          <div class="flex items-center gap-2 text-xs text-emerald-400/80">
+            <span>${w.plateforme}</span><span class="text-slate-600">·</span><span>${w.date}</span><span class="text-slate-600">·</span><span>${w.duration}</span>
+          </div>
+          <h2 class="mt-2 text-2xl md:text-3xl font-bold text-emerald-50">${w.title}</h2>
+          <div class="mt-3 flex flex-wrap gap-1.5">
+            ${w.stack.map(s=>`<span class="text-xs px-2 py-1 rounded bg-emerald-500/10 text-emerald-200 border border-emerald-500/20">${s}</span>`).join("")}
+          </div>
+        </div>
+
+        <section>
+          <h3 class="text-emerald-400 font-semibold mb-2">// Contexte</h3>
+          <p class="text-slate-300 leading-relaxed">${w.contexte}</p>
+        </section>
+
+        <img src="${w.gallery[0]}" alt="preuve 1" class="w-full h-72 object-cover rounded-lg border border-line">
+
+        <section>
+          <h3 class="text-emerald-400 font-semibold mb-2">// Vulnérabilité</h3>
+          <p class="text-slate-300 leading-relaxed">${w.vulnerabilite}</p>
+        </section>
+
+        <img src="${w.gallery[1]}" alt="preuve 2" class="w-full h-72 object-cover rounded-lg border border-line">
+
+        <section>
+          <h3 class="text-emerald-400 font-semibold mb-2">// Exploitation</h3>
+          <p class="text-slate-300 leading-relaxed">${w.exploitation}</p>
+        </section>
+
+        <section>
+          <h3 class="text-emerald-400 font-semibold mb-2">// Mitigation</h3>
+          <p class="text-slate-300 leading-relaxed">${w.mitigation}</p>
+        </section>
+
+      </div>
+
+      <aside class="lg:col-span-1">
+        <div class="rounded-xl border border-line bg-panel/60 p-5 sticky top-20 space-y-4">
+          <h3 class="text-emerald-400 font-semibold">// Fiche incident</h3>
+          <div><div class="text-xs text-slate-500">Cible</div><div class="text-emerald-100 text-sm">${w.target}</div></div>
+          <div><div class="text-xs text-slate-500">Difficulté</div><span class="inline-block mt-1 text-xs px-2 py-0.5 rounded badge-diff-${w.difficulty}">${w.difficulty}</span></div>
+          <div><div class="text-xs text-slate-500">CVE / Réf.</div><div class="text-emerald-100 text-sm break-all">${w.cve}</div></div>
+          <div><div class="text-xs text-slate-500">Rôle</div><div class="text-emerald-100 text-sm">${w.role}</div></div>
+          <div><div class="text-xs text-slate-500">Durée</div><div class="text-emerald-100 text-sm">${w.duration}</div></div>
+          <div><div class="text-xs text-slate-500">Date</div><div class="text-emerald-100 text-sm">${w.date}</div></div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="mt-12 grid sm:grid-cols-2 gap-4 border-t border-line pt-8">
+      <button data-go="prev" class="group flex items-center gap-4 p-4 rounded-lg border border-line bg-panel/60 hover:border-emerald-500/50 hover:shadow-glow transition text-left">
+        <img src="${prev.image}" class="w-20 h-16 object-cover rounded border border-line group-hover:border-emerald-500/50">
+        <div class="min-w-0">
+          <div class="text-xs text-emerald-400">← PREV_INCIDENT</div>
+          <div class="text-sm text-emerald-100 truncate">${prev.title}</div>
+        </div>
+      </button>
+      <button data-go="next" class="group flex items-center gap-4 p-4 rounded-lg border border-line bg-panel/60 hover:border-emerald-500/50 hover:shadow-glow transition text-right justify-end">
+        <div class="min-w-0">
+          <div class="text-xs text-emerald-400">NEXT_INCIDENT →</div>
+          <div class="text-sm text-emerald-100 truncate">${next.title}</div>
+        </div>
+        <img src="${next.image}" class="w-20 h-16 object-cover rounded border border-line group-hover:border-emerald-500/50">
+      </button>
+    </div>
+  `;
+  document.querySelector('[data-go="prev"]').addEventListener("click", ()=>{ currentIdx = (currentIdx - 1 + cyberData.writeups.length) % cyberData.writeups.length; renderModal(); document.getElementById("modal").scrollTo({top:0, behavior:"smooth"}); });
+  document.querySelector('[data-go="next"]').addEventListener("click", ()=>{ currentIdx = (currentIdx + 1) % cyberData.writeups.length; renderModal(); document.getElementById("modal").scrollTo({top:0, behavior:"smooth"}); });
+}
+document.getElementById("modalBack").addEventListener("click", closeModal);
+document.getElementById("modalClose").addEventListener("click", closeModal);
+document.addEventListener("keydown",(e)=>{
+  if(document.getElementById("modal").classList.contains("hidden")) return;
+  if(e.key==="Escape") closeModal();
+  if(e.key==="ArrowLeft"){ currentIdx = (currentIdx - 1 + cyberData.writeups.length) % cyberData.writeups.length; renderModal(); }
+  if(e.key==="ArrowRight"){ currentIdx = (currentIdx + 1) % cyberData.writeups.length; renderModal(); }
+});
+
+/* ===================== CONTACT ===================== */
+document.getElementById("contactForm").addEventListener("submit",(e)=>{
+  e.preventDefault();
+  const f = e.target;
+  const data = { name:f.name.value, email:f.email.value, message:f.message.value };
+  const status = document.getElementById("formStatus");
+  status.textContent = "[ OK ] message prêt — ouverture client mail...";
+  const subject = encodeURIComponent(`[Portfolio] Contact de ${data.name}`);
+  const body = encodeURIComponent(`${data.message}\n\n— ${data.name}\n${data.email}`);
+  window.location.href = `mailto:${cyberData.identity.email}?subject=${subject}&body=${body}`;
+  setTimeout(()=> status.textContent = "", 4000);
+});
+
+/* ===================== INIT ===================== */
+document.getElementById("year").textContent = new Date().getFullYear();
+document.getElementById("footerSocials").innerHTML = socialHTML();
+renderWriteups();
+renderProfile();
+typeBoot();
+</script>
+</body>
+</html>
