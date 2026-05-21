@@ -464,7 +464,10 @@ const cyberData = {
       cve: "N/A — Migration & Durcissement",
       difficulty: "High", // Basé sur les risques de niveau "ÉLEVÉ" et "CRITIQUE" [cite: 768]
       image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=70", // Image générique d'infrastructure cloud
-      ,
+      gallery: [
+        "assets/images/preuve1.jpg",
+        "assets/images/preuve2.jpg"
+      ],
       contexte: "Réponse à un appel d'offre pour la migration sécurisée d'une infrastructure vers AWS.  L'objectif est d'accompagner la transformation digitale en garantissant la protection des données, la conformité RGPD et la maîtrise des risques via le passage au Zéro Trust.",
       vulnerabilite: "Les risques identifiés sur l'existant incluent une absence de contrôle des accès (IAM), des Security Groups mal configurés (0.0.0.0/0), des données sensibles non chiffrées au repos ou en transit, et une absence de monitoring. ",
       exploitation: "Sans principe du moindre privilège, l'exposition accidentelle des systèmes privés sur Internet (ou la compromission d'un compte) permet à un attaquant d'atteindre facilement la base de données, menant à une fuite de données exploitable immédiatement.",
