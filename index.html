@@ -249,26 +249,25 @@
     <p class="text-slate-400 mt-2">Pour collaboration, mission, ou échange technique. La transmission est chiffrée côté client.</p>
 
     <form id="contactForm" class="mt-8 rounded-xl border border-line bg-panel/70 p-6 md:p-8 space-y-5">
-      <div class="text-emerald-400 text-xs">┌─[user@stephane]─[~/contact]<br>└─$ ./send_message</div>
 
       <label class="block">
-        <span class="text-emerald-300 text-xs">User_Name:</span>
+        <span class="text-emerald-300 text-xs">Nom</span>
         <div class="mt-1 flex items-center gap-2 border border-line rounded-md bg-base px-3 py-2 focus-within:border-emerald-500 focus-within:shadow-glow transition">
           <span class="text-emerald-500">$</span>
-          <input required name="name" type="text" placeholder="Jane Doe" class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm">
+          <input required name="name" type="text" placeholder="Votre nom" class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm">
         </div>
       </label>
 
       <label class="block">
-        <span class="text-emerald-300 text-xs">User_Email:</span>
+        <span class="text-emerald-300 text-xs">Email:</span>
         <div class="mt-1 flex items-center gap-2 border border-line rounded-md bg-base px-3 py-2 focus-within:border-emerald-500 focus-within:shadow-glow transition">
           <span class="text-emerald-500">$</span>
-          <input required name="email" type="email" placeholder="jane@corp.io" class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm">
+          <input required name="email" type="email" placeholder="Votre adresse mail" class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm">
         </div>
       </label>
 
       <label class="block">
-        <span class="text-emerald-300 text-xs">Command_Message:</span>
+        <span class="text-emerald-300 text-xs">Message:</span>
         <div class="mt-1 flex gap-2 border border-line rounded-md bg-base px-3 py-2 focus-within:border-emerald-500 focus-within:shadow-glow transition">
           <span class="text-emerald-500 mt-0.5">&gt;</span>
           <textarea required name="message" rows="6" placeholder="Décris ta demande, ton contexte, ton scope..." class="flex-1 bg-transparent text-emerald-100 placeholder:text-slate-600 text-sm resize-y"></textarea>
@@ -276,8 +275,8 @@
       </label>
 
       <div class="flex flex-wrap items-center gap-3 pt-2">
-        <button type="submit" class="px-5 py-2.5 rounded-md bg-emerald-500 text-slate-900 font-semibold hover:bg-emerald-400 transition shadow-glow">[ EXEC ] — Envoyer</button>
-        <a href="mailto:tarpade@hotmail.fr" class="text-emerald-300 hover:text-emerald-200 text-sm">…ou via mailto://</a>
+        <button type="submit" class="px-5 py-2.5 rounded-md bg-emerald-500 text-slate-900 font-semibold hover:bg-emerald-400 transition shadow-glow">Envoyer</button>
+        <a href="mailto:tarpade@hotmail.fr" class="text-emerald-300 hover:text-emerald-200 text-sm">Ou via mailto</a>
         <span id="formStatus" class="text-emerald-400 text-xs ml-auto"></span>
       </div>
     </form>
